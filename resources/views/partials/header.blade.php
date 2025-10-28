@@ -134,7 +134,7 @@
         { nombre: 'Dashboard', url: "{{ route('dashboard') }}" },
         { nombre: 'Categoría', url: "{{ route('categorias.index') }}" },
         { nombre: 'Producto', url: "{{ route('products.index') }}" },
-        { nombre: 'Cliente', url: "{{ route('customers.index') }}" },
+        { nombre: 'Tienda', url: "{{ route('customers.index') }}" },
         { nombre: 'Proveedor', url: "{{ route('suppliers.index') }}" },
         { nombre: 'Usuario', url: "{{ route('users.index') }}" },
         { nombre: 'Roles', url: "{{ route('roles.index') }}" },

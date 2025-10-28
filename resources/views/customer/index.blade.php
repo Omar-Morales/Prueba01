@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mantenimiento de Clientes')
+@section('title', 'Mantenimiento de Tiendas')
 
 @section('content')
 <div class="page-content">
@@ -9,12 +9,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Listado de Clientes</h4>
+                    <h4 class="mb-sm-0">Listado de Tiendas</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript:void(0);">Mantenimiento</a></li>
-                            <li class="breadcrumb-item active">Clientes</li>
+                            <li class="breadcrumb-item active">Tiendas</li>
                         </ol>
                     </div>
                 </div>
@@ -27,8 +27,8 @@
 
                     <div class="card-body">
                         @can('administrar.clientes.create')
-                        <button type="button" class="btn btn-primary mb-3" id="btnCrearCliente" data-bs-toggle="modal" data-bs-target="#modalCliente">
-                            Nuevo Cliente
+                            <button type="button" class="btn btn-primary mb-3" id="btnCrearTienda" data-bs-toggle="modal" data-bs-target="#modalTienda">
+                            Nueva Tienda
                         </button>
                         @endcan
                         <div class="table-responsive">
@@ -36,11 +36,10 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Logo</th>
                                         <th>RUC</th>
                                         <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>Teléfono</th>
+                                        <th>Ubicacion</th>
+                                        <th>Telefono</th>
                                         <!--<th>Estado</th>-->
                                         <th>Acciones</th>
                                     </tr>
@@ -60,15 +59,15 @@
     </div>
 </div>
 
-<!-- Modal Crear/Editar Cliente -->
-<div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+<!-- Modal Crear/Editar Tienda -->
+<div class="modal fade" id="modalTienda" tabindex="-1" aria-labelledby="modalTiendaLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="formCliente">
+        <form id="formTienda">
             @csrf
-            <input type="hidden" id="cliente_id" name="cliente_id">
+            <input type="hidden" id="tienda_id" name="tienda_id">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalClienteLabel">Nuevo Cliente</h5>
+                    <h5 class="modal-title" id="modalTiendaLabel">Nueva Tienda</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
@@ -81,16 +80,13 @@
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Correo</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <label for="location" class="form-label">Ubicacion</label>
+                        <select class="form-select" id="location" name="location" required>
+                        </select>
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Teléfono</label>
+                        <label for="phone" class="form-label">Telefono</label>
                         <input type="text" class="form-control" id="phone" name="phone" maxlength="9">
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Dirección</label>
-                        <textarea name="address" class="form-control" id="address"></textarea>
                     </div>
                     <!--<div class="mb-3">
                         <label for="status" class="form-label">Estado</label>
@@ -100,44 +96,14 @@
                             <option value="inactive">Inactivo</option>
                         </select>
                     </div>-->
-                    <div class="mb-3">
-                        <label for="photo" class="form-label">Logo (foto)</label>
-                        <input type="file" class="form-control" id="photo" name="photo" accept="image/jpeg,image/png,image/jpg,image/gif">
-                    </div>
-
-                        <!-- Botón para mostrar imagen -->
-                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="btnVerLogo" style="display: none;">
-                        Ver logo actual
-                    </button>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardarCliente">Guardar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarTienda">Guardar</button>
                 </div>
             </div>
         </form>
     </div>
-</div>
-
-<!-- Modal para ver logo -->
-<style>
-  #modalVerLogo .modal-dialog {
-    max-width: 400px;
-  }
-</style>
-
-<div class="modal fade" id="modalVerLogo" tabindex="-1" aria-labelledby="modalVerLogoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-    <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-    </div>
-    <div class="modal-body text-center">
-        <img id="imgLogoModal" src="" alt="Logo del cliente" class="img-fluid rounded shadow" style="max-height: 300px;">
-    </div>
-    </div>
-  </div>
 </div>
 
 @endsection

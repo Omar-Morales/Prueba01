@@ -1,17 +1,27 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Customer;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
+    protected const LOCATIONS = [
+        'Cdra 7',
+        'Cdra 8',
+        'Cdra 9',
+        'Cdra 10',
+        'Cdra 11',
+        'Cdra 12',
+        'Cdra 13',
+    ];
+
     public function __construct()
     {
-        //🔹 Solo el ADMINISTRADOR y MANTENEDOR pueden acceder a este controlador
         $this->middleware(['auth', 'permission:administrar.clientes.index'])->only('index', 'getData', 'show');
         $this->middleware(['auth', 'permission:administrar.clientes.create'])->only('create', 'store');
         $this->middleware(['auth', 'permission:administrar.clientes.edit'])->only('edit', 'update');
@@ -29,39 +39,53 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge(['name' => trim($request->name)]);
+
         $request->validate([
-            'ruc' => 'required|unique:customers|max:11',
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customers,email',
-            'phone' => 'required|string|max:15',
-            'address' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            //'status' => 'required|in:active,inactive',
+            'ruc' => 'required|string|max:11',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('customers')->where(fn($query) => $query->where('status', 'active')),
+            ],
+            'phone' => 'nullable|string|max:15',
+            'address' => [
+                'required',
+                'string',
+                Rule::in(self::LOCATIONS),
+            ],
         ]);
 
-        $data = $request->all();
+        $normalizedName = mb_strtolower($request->name);
+        $existingByName = Customer::whereRaw('LOWER(TRIM(name)) = ?', [$normalizedName])->first();
 
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('customers', 'public');
-            $data['photo'] = $photoPath;
+        if ($existingByName && $existingByName->status === 'inactive') {
+            $existingByName->update([
+                'ruc' => $request->ruc,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'status' => 'active',
+            ]);
+
+            return response()->json(['message' => 'Tienda reactivada correctamente.']);
         }
 
-        Customer::create($data);
+        Customer::create([
+            'ruc' => $request->ruc,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'status' => 'active',
+        ]);
 
-        return response()->json(['message' => 'Cliente creado correctamente.']);
+        return response()->json(['message' => 'Tienda creada correctamente.']);
     }
-
 
     public function show($id)
     {
-        $customer = Customer::findOrFail($id);
-
-        if ($customer->photo && file_exists(storage_path('app/public/' . $customer->photo))) {
-        $customer->photo_url = asset('storage/' . $customer->photo);
-        } else {
-            $customer->photo_url = asset('assets/images/customers.png'); // Ruta a tu placeholder
-        }
-        return response()->json($customer);
+        return response()->json(Customer::findOrFail($id));
     }
 
     public function edit(string $id)
@@ -70,87 +94,78 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->merge(['name' => trim($request->name)]);
+
         $request->validate([
-            'ruc' => 'required|max:11|unique:customers,ruc,' . $id,
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customers,email,' . $id,
-            'phone' => 'required|string|max:15',
-            'address' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            //'status' => 'required|in:active,inactive',
+            'ruc' => 'required|string|max:11',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('customers')->ignore($id)->where(fn($query) => $query->where('status', 'active')),
+            ],
+            'phone' => 'nullable|string|max:15',
+            'address' => [
+                'required',
+                'string',
+                Rule::in(self::LOCATIONS),
+            ],
         ]);
 
         $customer = Customer::findOrFail($id);
-        $data = $request->all();
+        $customer->update([
+            'ruc' => $request->ruc,
+            'name' => trim($request->name),
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
 
-        if ($request->hasFile('photo')) {
-            if ($customer->photo) {
-                Storage::disk('public')->delete($customer->photo);
-            }
-            $photoPath = $request->file('photo')->store('customers', 'public');
-            $data['photo'] = $photoPath;
-        }
-
-        $customer->update($data);
-
-        return response()->json(['message' => 'Cliente actualizado correctamente.']);
+        return response()->json(['message' => 'Tienda actualizada correctamente.']);
     }
-
 
     public function destroy(string $id)
     {
         $customer = Customer::findOrFail($id);
         $customer->status = 'inactive';
         $customer->save();
-        //$customer->delete();
 
-        return response()->json(['message' => 'Cliente eliminado correctamente.']);
+        return response()->json(['message' => 'Tienda eliminada correctamente.']);
     }
 
-        public function getData(Request $request)
+    public function getData(Request $request)
     {
-        $customers = Customer::select(['id', 'photo', 'ruc', 'name', 'email', 'phone', 'status'])->where('status', 'active');
-
+        $customers = Customer::select(['id', 'ruc', 'name', 'address', 'phone', 'status'])
+            ->where('status', 'active');
 
         if ($request->ajax()) {
-        return DataTables::of($customers)
-        ->addColumn('photo', function ($customer) {
-                $photo = $customer->photo;
+            return DataTables::of($customers)
+                ->addColumn('location', fn($customer) => $customer->address ?? '-')
+                ->addColumn('acciones', function ($customer) {
+                    $acciones = '';
 
-                if ($photo && file_exists(storage_path('app/public/' . $photo))) {
-                    $url = asset('storage/' . $photo);
-                } else {
-                    $url = asset('assets/images/customers.png');
-                }
+                    if (Auth::user()->can('administrar.clientes.edit')) {
+                        $acciones .= '
+                            <button type="button"
+                                class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light edit-btn"
+                                data-id="' . $customer->id . '"
+                                title="Editar">
+                                <i class="ri-edit-2-line"></i>
+                            </button>';
+                    }
+                    if (Auth::user()->can('administrar.clientes.delete')) {
+                        $acciones .= '
+                            <button type="button"
+                                class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
+                                data-id="' . $customer->id . '"
+                                title="Eliminar">
+                                <i class="ri-delete-bin-5-line"></i>
+                            </button>';
+                    }
 
-                return '<img src="' . $url . '" class="custom-thumbnail" width="30" alt="Foto de ' . e($customer->name) . '">';
-            })
-        ->addColumn('acciones', function ($customer) {
-            $acciones = '';
-
-            if (Auth::user()->can('administrar.clientes.edit')) {
-            $acciones .= '
-                    <button type="button"
-                            class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light edit-btn"
-                            data-id="' . $customer->id . '"
-                            title="Editar">
-                        <i class="ri-edit-2-line"></i>
-                    </button>';
-            }
-            if (Auth::user()->can('administrar.clientes.delete')) {
-            $acciones .= '
-                    <button type="button"
-                            class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
-                            data-id="' . $customer->id . '"
-                            title="Eliminar">
-                        <i class="ri-delete-bin-5-line"></i>
-                    </button>';
-            }
-
-            return $acciones ?: '<span class="text-muted">Sin acciones</span>';
-            })
-        ->rawColumns(['photo', 'acciones'])
-        ->make(true);
+                    return $acciones ?: '<span class="text-muted">Sin acciones</span>';
+                })
+                ->rawColumns(['acciones'])
+                ->make(true);
         }
 
         return response()->json(['error' => 'Acceso no permitido'], 403);
@@ -160,11 +175,10 @@ class CustomerController extends Controller
     {
         $query = Customer::query();
 
-        // Incluir cliente inactivo si es edición
         if ($request->has('include_id')) {
             $query->where(function ($q) use ($request) {
                 $q->where('status', 'active')
-                ->orWhere('id', $request->include_id);
+                    ->orWhere('id', $request->include_id);
             });
         } else {
             $query->where('status', 'active');

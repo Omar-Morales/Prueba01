@@ -1,249 +1,164 @@
 import axios from 'axios';
-axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-const modal = new bootstrap.Modal(document.getElementById('modalCliente'));
 
-// Inicializar select2 al cargar la página
-/*const $status = $('#status');
-if (!$status.hasClass('select2-hidden-accessible')) {
-  $status.select2({
-    dropdownParent: $('#modalCliente'),
-    width: '100%',
-    placeholder: 'Seleccione una opción',
-    allowClear: true,
-    theme: 'bootstrap-5'
-  });
-}*/
+axios.defaults.headers.common['X-CSRF-TOKEN'] =
+    document.querySelector('meta[name="csrf-token"]').content;
 
-// Abrir modal para crear
-$('#btnCrearCliente').on('click', function () {
-    $('#modalClienteLabel').text('Nuevo Cliente');
-    $('#formCliente').trigger('reset');
-    $('#cliente_id').val('');
-    $('#btnVerLogo').hide(); // 👈 Esta línea es la clave
-    $('#modalCliente').modal('show'); // o modal.show()
+const LOCATION_OPTIONS = [
+    'Cdra 7',
+    'Cdra 8',
+    'Cdra 9',
+    'Cdra 10',
+    'Cdra 11',
+    'Cdra 12',
+    'Cdra 13'
+];
+
+const modalElement = document.getElementById('modalTienda');
+const modal = new bootstrap.Modal(modalElement);
+const form = document.getElementById('formTienda');
+const locationSelect = document.getElementById('location');
+const hiddenId = document.getElementById('tienda_id');
+const btnCrear = document.getElementById('btnCrearTienda');
+
+function populateLocations(selected = '') {
+    if (!locationSelect) return;
+    locationSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+    LOCATION_OPTIONS.forEach((option) => {
+        const opt = document.createElement('option');
+        opt.value = option;
+        opt.textContent = option;
+        if (option === selected) {
+            opt.selected = true;
+        }
+        locationSelect.appendChild(opt);
+    });
+}
+
+btnCrear?.addEventListener('click', () => {
+    form.reset();
+    hiddenId.value = '';
+    populateLocations();
+    document.getElementById('modalTiendaLabel').textContent = 'Nueva Tienda';
+    modal.show();
 });
-
 
 const table = $('#customersTable').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
-        url: '/customers/data',  // cambia la ruta a tu endpoint de clientes
-        type: 'GET',
-        xhrFields: {
-            withCredentials: true
-        }
+        url: '/customers/data',
+        type: 'GET'
     },
     columns: [
         { data: 'id', name: 'id' },
-        {
-          data: 'photo',
-          name: 'photo',
-          orderable: false,
-          searchable: false
-        },
         { data: 'ruc', name: 'ruc' },
         { data: 'name', name: 'name' },
-        { data: 'email', name: 'email' },
+        { data: 'location', name: 'location', orderable: false, searchable: false },
         { data: 'phone', name: 'phone' },
-        /* data: 'status', name: 'status' },*/
         { data: 'acciones', name: 'acciones', orderable: false, searchable: false }
     ],
-    language: {
-        url: '/assets/js/es-ES.json'
-    },
+    language: { url: '/assets/js/es-ES.json' },
     responsive: true,
     autoWidth: false,
     pageLength: 10,
     order: [[0, 'asc']],
     dom: 'Bfrtip',
-buttons: [
-  {
-    extend: 'colvis',
-    text: 'Seleccionar Columnas',
-    className: 'btn btn-info',
-    postfixButtons: ['colvisRestore']
-  }
-]
+    buttons: [
+        {
+            extend: 'colvis',
+            text: 'Seleccionar Columnas',
+            className: 'btn btn-info',
+            postfixButtons: ['colvisRestore']
+        }
+    ]
 });
 
-// Función para actualizar estilos de los botones colVis
-function updateColvisStyles() {
-  $('.dt-button-collection .dt-button').each(function () {
-    const isActive = $(this).hasClass('active') || $(this).hasClass('dt-button-active');
+function refreshColVisStyles() {
+    $('.dt-button-collection .dt-button').each(function () {
+        const $btn = $(this);
+        const isActive = $btn.hasClass('active') || $btn.hasClass('dt-button-active');
+        const hasCheck = $btn.find('.checkmark').length > 0;
 
-    if (isActive) {
-      // Agregar check si no existe
-      if ($(this).find('.checkmark').length === 0) {
-        $(this).prepend('<span class="checkmark">✔</span>');
-      }
-    } else {
-      // Remover check si existe
-      $(this).find('.checkmark').remove();
-    }
-  });
+        if (isActive && !hasCheck) {
+            $btn.prepend('<span class="checkmark">&#10003;</span>');
+        } else if (!isActive && hasCheck) {
+            $btn.find('.checkmark').remove();
+        }
+    });
 }
 
-// Evento cuando se hace alguna acción con los botones (activar/desactivar columna)
-table.on('buttons-action', function () {
-  setTimeout(updateColvisStyles, 10);
-});
+table.on('buttons-action', () => setTimeout(refreshColVisStyles, 10));
+$(document).on('click', '.buttons-colvis', () => setTimeout(refreshColVisStyles, 50));
+$(document).ready(() => setTimeout(refreshColVisStyles, 100));
 
-// Evento para cuando abren el menú de columnas visibles
-$(document).on('click', '.buttons-colvis', function () {
-  setTimeout(updateColvisStyles, 50);
-});
-
-// Opcional: cuando se carga la página
-$(document).ready(function () {
-  setTimeout(updateColvisStyles, 100);
-
-$(window).on('scroll', function () {
-    const $menu = $('.dt-button-collection:visible');
-    if (!$menu.length) return;
-
-    const windowWidth = document.documentElement.clientWidth;
-    console.log('window.innerWidth:', window.innerWidth, 'clientWidth:', windowWidth);
-
-    let $nav;
-    if (windowWidth >= 1024 && $('.app-menu').is(':visible')) {
-        $nav = $('.app-menu');
-        console.log('Usando menú lateral (.app-menu)');
-    } else {
-        $nav = $('#page-topbar');
-        console.log('Usando header (#page-topbar)');
-    }
-
-    if (!$nav.length) return;
-
-    const menuTop = $menu.offset().top;
-    const navBottom = $nav.offset().top + $nav.outerHeight();
-    const tolerance = 2;
-
-    console.log('menuTop:', menuTop, 'navBottom + tolerance:', navBottom + tolerance);
-
-    if (menuTop < navBottom + tolerance) {
-        const $toggleBtn = $('.buttons-colvis');
-
-        $menu.css('z-index', 50);
-
-        $menu.fadeOut(200, function () {
-            $(this).css('z-index', 1050);
-        });
-
-        $('body').trigger('click');
-
-        $toggleBtn.removeClass('active dt-btn-split-drop-active');
-        $toggleBtn.attr('aria-expanded', 'false');
-        $toggleBtn.blur();
-
-        console.log('Menú ocultado');
-    }
-});
-});
-
-
-
-// Abrir modal para editar
-$(document).on('click', '.edit-btn', function () {
+$(document).on('click', '.edit-btn', async function () {
     const id = $(this).data('id');
-    axios.get(`/customers/${id}`)
-        .then(response => {
-            const data = response.data;
-            $('#modalClienteLabel').text('Editar Cliente');
-            $('#cliente_id').val(data.id);
-            $('#ruc').val(data.ruc);
-            $('#name').val(data.name);
-            $('#email').val(data.email);
-            $('#phone').val(data.phone);
-            $('#address').val(data.address);
-            /*$('#status').val(data.status).trigger('change');*/
-            // Nota: para foto, podrías mostrar preview o dejar vacío
-            if (data.photo_url) {
-                $('#btnVerLogo').data('photo-url', data.photo_url).show();
-            } else {
-                $('#btnVerLogo').hide(); // opcional, pero ya no debería suceder
-            }
+    try {
+        const { data } = await axios.get(`/customers/${id}`);
 
-            modal.show();
-        })
-        .catch(error => {
-            console.error('Error al obtener el cliente:', error);
+        hiddenId.value = data.id;
+        document.getElementById('ruc').value = data.ruc || '';
+        document.getElementById('name').value = data.name || '';
+        document.getElementById('phone').value = data.phone || '';
+        populateLocations(data.address || '');
+
+        document.getElementById('modalTiendaLabel').textContent = 'Editar Tienda';
+        modal.show();
+    } catch (error) {
+        console.error(error);
+        Toastify({
+            text: 'No se pudo cargar la tienda',
+            duration: 3000,
+            gravity: 'top',
+            position: 'right',
+            backgroundColor: '#dc3545'
+        }).showToast();
+    }
+});
+
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const id = hiddenId.value;
+    const payload = {
+        ruc: document.getElementById('ruc').value,
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        address: locationSelect.value
+    };
+
+    const request = id
+        ? axios.put(`/customers/${id}`, payload)
+        : axios.post('/customers', payload);
+
+    request
+        .then(({ data }) => {
+            modal.hide();
+            form.reset();
+            populateLocations();
+            table.ajax.reload(null, false);
+
             Toastify({
-                text: "No se pudo cargar el cliente",
+                text: data.message || (id ? 'Tienda actualizada' : 'Tienda creada'),
                 duration: 3000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#dc3545"
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#28a745'
+            }).showToast();
+        })
+        .catch((error) => {
+            console.error(error);
+            Toastify({
+                text: error.response?.data?.message || 'Error al guardar la tienda',
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#dc3545'
             }).showToast();
         });
 });
 
-const modalVerLogoEl = document.getElementById('modalVerLogo');
-const modalVerLogo = new bootstrap.Modal(modalVerLogoEl, {
-    keyboard: true
-});
-
-$('#btnVerLogo').on('click', function () {
-    const url = $(this).data('photo-url');
-    $('#imgLogoModal').attr('src', url);
-    modalVerLogo.show();
-});
-
-
-// Guardar cliente
-document.getElementById('formCliente').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const id = document.getElementById('cliente_id').value;
-    const url = id ? `/customers/${id}` : '/customers';
-
-    let formData = new FormData();
-    if(id) formData.append('_method', 'PUT');
-    formData.append('ruc', document.getElementById('ruc').value);
-    formData.append('name', document.getElementById('name').value);
-    formData.append('email', document.getElementById('email').value);
-    formData.append('phone', document.getElementById('phone').value);
-    /*formData.append('status', document.getElementById('status').value);*/
-    formData.append('address', document.getElementById('address').value);
-    // Si se subió una foto
-    const photoInput = document.getElementById('photo');
-    if(photoInput.files.length > 0) {
-        formData.append('photo', photoInput.files[0]);
-    }
-
-    axios.post(url, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-    .then(response => {
-        modal.hide();
-        this.reset();
-        $('#customersTable').DataTable().ajax.reload();
-
-        Toastify({
-            text: response.data.message || (id ? "Cliente actualizado" : "Cliente creado"),
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#28a745"
-        }).showToast();
-    })
-    .catch(error => {
-        console.error(error);
-        Toastify({
-            text: "Error al guardar el cliente",
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#dc3545"
-        }).showToast();
-    });
-});
-
-$(document).on('click', '.delete-btn', function (e) {
-    e.preventDefault();
+$(document).on('click', '.delete-btn', function () {
     const id = $(this).data('id');
 
     Swal.fire({
@@ -256,37 +171,43 @@ $(document).on('click', '.delete-btn', function (e) {
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.isConfirmed) {
-            axios.delete(`/customers/${id}`)
-            .then(response => {
-                $('#customersTable').DataTable().ajax.reload();
+        if (!result.isConfirmed) return;
 
+        axios
+            .delete(`/customers/${id}`)
+            .then(({ data }) => {
+                table.ajax.reload(null, false);
                 Toastify({
-                    text: response.data.message || "Cliente eliminado",
+                    text: data.message || 'Tienda eliminada',
                     duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#28a745"
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#28a745'
                 }).showToast();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error(error);
                 Toastify({
-                    text: "Error al eliminar el cliente",
+                    text: 'Error al eliminar la tienda',
                     duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#dc3545"
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: '#dc3545'
                 }).showToast();
             });
-        }
     });
 });
 
-document.getElementById('ruc').addEventListener('input', function () {
+document.getElementById('ruc')?.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-document.getElementById('phone').addEventListener('input', function () {
+document.getElementById('phone')?.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
+
+populateLocations();
+
+
+
+
