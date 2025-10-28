@@ -11,12 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
 
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\QrCode as EndroidQrCode;
-use Endroid\QrCode\Writer\PngWriter;
-
-use Picqer\Barcode\BarcodeGeneratorPNG;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
@@ -50,7 +44,6 @@ class ProductController extends Controller
         'quantity' => 'required|integer|min:1',
         'category_id' => 'required|exists:categories,id',
         //'status' => 'required|in:available,sold,archived',
-        'fechvencimiento' => 'nullable|date',
         'temp_images' => 'nullable|array',
         'temp_images.*' => 'string',
     ]);
@@ -67,7 +60,7 @@ class ProductController extends Controller
     $sku = 'PROD-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
     // Crear producto
-    $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id', /*'status',*/ 'fechvencimiento']);
+    $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id'/*, 'status'*/]);
     $data['user_id'] = auth()->id();
     $data['sku'] = $sku;
 
@@ -139,14 +132,13 @@ class ProductController extends Controller
         'quantity' => 'required|integer|min:1',
         'category_id' => 'required|exists:categories,id',
         //'status' => 'required|in:available,sold,archived',
-        'fechvencimiento' => 'nullable|date',
         'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'images_to_delete' => 'nullable|string',
     ]);
 
     $product = Product::findOrFail($id);
 
-    $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id', /*'status',*/ 'fechvencimiento']);
+    $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id'/*, 'status'*/]);
     $product->update($data);
 
     if ($request->filled('images_to_delete')) {
@@ -203,23 +195,6 @@ class ProductController extends Controller
                     default => '<span class="badge bg-secondary p-2">Desconocido</span>',
                 };
             })
-            ->addColumn('fechvencimiento_estado', function ($product) {
-            if (!$product->fechvencimiento) {
-                return '<span class="badge bg-secondary p-2">Sin fecha</span>';
-            }
-
-            $today = \Carbon\Carbon::today();
-            $expirationDate = \Carbon\Carbon::parse($product->fechvencimiento);
-            $daysDifference = $today->diffInDays($expirationDate, false);
-
-            if ($daysDifference < 0) {
-                return '<span class="badge bg-danger text-white p-2">' . $expirationDate->format('d/m/Y') . ' - Vencido</span>';
-            } elseif ($daysDifference <= 30) {
-                return '<span class="badge bg-warning text-dark p-2">' . $expirationDate->format('d/m/Y') . ' - Por vencer</span>';
-            } else {
-                return '<span class="badge bg-success text-white p-2">' . $expirationDate->format('d/m/Y') . ' - Vigente</span>';
-            }
-        })
         ->addColumn('image', function ($product) {
             $img = $product->images->first();
             $photoPath = $img ? $img->image_path : null;
@@ -233,28 +208,6 @@ class ProductController extends Controller
             return '<img src="' . $url . '" class="img-thumbnail" width="30" alt="Imagen de producto">';
         })
         ->addColumn('category_name', fn($product) => $product->category->name ?? 'Sin Categoría')
-
-        ->addColumn('barcode', function ($product) {
-            $generator = new BarcodeGeneratorPNG();
-            $barcode = base64_encode($generator->getBarcode($product->sku, $generator::TYPE_CODE_128));
-            return '<img src="data:image/png;base64,' . $barcode . '" style="height:30px; width:auto; max-width:150px;">';
-        })
-
-        ->addColumn('qrcode', function ($product) {
-            $qrCode = new EndroidQrCode(
-                data: $product->sku,
-                encoding: new Encoding('UTF-8'),
-                errorCorrectionLevel: ErrorCorrectionLevel::Low,
-                size: 100,
-                margin: 5
-            );
-
-            $writer = new PngWriter();
-            $result = $writer->write($qrCode);
-
-            $qrBase64 = base64_encode($result->getString());
-            return '<img src="data:image/png;base64,' . $qrBase64 . '" style="height:40px;">';
-        })
 
         ->addColumn('acciones', function ($product) {
             if ($product->status === 'archived') {
@@ -284,7 +237,7 @@ class ProductController extends Controller
 
             return $acciones ?: '<span class="text-muted">Sin acciones</span>';
         })
-        ->rawColumns(['estado','image', 'barcode', 'qrcode', 'acciones', 'fechvencimiento_estado'])
+        ->rawColumns(['estado', 'image', 'acciones'])
         ->make(true);
     }
 

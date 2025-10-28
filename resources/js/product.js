@@ -16,9 +16,6 @@ let table = $('#productsTable').DataTable({
     { data:'price' },
     { data:'quantity' },
     { data:'estado', name:'estado' },
-    { data:'fechvencimiento_estado', name:'fechvencimiento_estado' },
-    { data:'barcode', orderable:false },
-    { data:'qrcode', orderable:false },
     { data:'acciones', orderable:false, searchable:false }
   ],
   language: { url: '/assets/js/es-ES.json' },
@@ -304,7 +301,6 @@ try {
     $('#price').val(product.price);
     $('#quantity').val(product.quantity);
     $('#description').val(product.description);
-    $('#fechvencimiento').val(product.fechvencimiento || '');
     //$('#status').val(product.status).trigger('change');
     const $select = $('#category_id');
     $select.empty(); // Vaciar opciones actuales

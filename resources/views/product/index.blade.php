@@ -41,15 +41,13 @@
                     <th>Precio</th>
                     <th>Cantidad</th>
                     <th>Estado</th>
-                    <th>Fech.Ven.</th>
-                    <th>Código de Barra</th>
-                    <th>QR</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody></tbody>
               </table>
             </div>
+            <br/>
 
           </div>
         </div>
@@ -89,17 +87,12 @@
           </div>
 
           <div class="row">
-            <div class="col-md-4 mb-3">
-              <label for="fechvencimiento" class="form-label">Fecha de Vencimiento</label>
-              <input type="date" class="form-control" id="fechvencimiento" name="fechvencimiento">
-            </div>
-
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 mb-3">
               <label for="price" class="form-label">Precio</label>
               <input type="number" step="0.01" class="form-control" id="price" name="price" required>
             </div>
 
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 mb-3">
               <label for="quantity" class="form-label">Cantidad</label>
               <input type="number" class="form-control" id="quantity" name="quantity" required>
             </div>
