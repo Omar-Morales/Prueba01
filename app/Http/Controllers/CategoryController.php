@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
+
+class CategoryController extends Controller
+{
+    public function __construct()
+    {
+        // 🔹 Solo el ADMINISTRADOR y MANTENEDOR pueden acceder a este controlador
+        $this->middleware(['auth', 'permission:administrar.categorias.index'])->only('index', 'getData');
+        $this->middleware(['auth', 'permission:administrar.categorias.create'])->only('create', 'store');
+        $this->middleware(['auth', 'permission:administrar.categorias.edit'])->only('edit', 'update');
+        $this->middleware(['auth', 'permission:administrar.categorias.delete'])->only('destroy');
+
+    }
+
+    public function index()
+    {
+        return view('categoria.index');
+    }
+
+    public function create()
+    {
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:categories|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        Category::create($request->all());
+
+        return response()->json(['message' => 'Categoría creada correctamente.']);
+    }
+
+    public function show($id)
+    {
+        $categoria = Category::findOrFail($id);
+        return response()->json($categoria);
+    }
+
+    public function edit(string $id)
+    {
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => 'required|max:255|unique:categories,name,' . $id,
+            'description' => 'nullable|string',
+        ]);
+
+        $categoria = Category::findOrFail($id);
+        $categoria->update($request->all());
+
+        return response()->json(['message' => 'Categoría actualizada correctamente.']);
+    }
+
+    public function destroy(string $id)
+    {
+        $categoria = Category::findOrFail($id);
+        $categoria->status = 'inactive';
+        $categoria->save();
+        //$categoria->delete();
+
+        return response()->json(['message' => 'Categoría eliminada correctamente.']);
+    }
+
+    public function getData(Request $request)
+    {
+    $categorias = Category::select(['id', 'name', 'description'])->where('status', 'active');
+
+     if ($request->ajax()) {
+    return DataTables::of($categorias)
+        ->addColumn('acciones', function ($categoria) {
+        $acciones = '';
+
+        if (Auth::user()->can('administrar.categorias.edit')) {
+            $acciones .= '
+            <button type="button"
+                    class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light edit-btn"
+                    data-id="' . $categoria->id . '"
+                    title="Editar">
+                <i class="ri-edit-2-line"></i>
+            </button>';
+        }
+
+        if (Auth::user()->can('administrar.categorias.delete')) {
+            $acciones .= '
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
+                    data-id="' . $categoria->id . '"
+                    title="Eliminar">
+                <i class="ri-delete-bin-5-line"></i>
+            </button>';
+        }
+
+        return $acciones ?: '<span class="text-muted">Sin acciones</span>';
+        })
+        ->rawColumns(['acciones'])
+        ->make(true);
+        }
+
+    return response()->json(['error' => 'Acceso no permitido'], 403);
+    }
+
+    public function select(Request $request)
+    {
+    $query = Category::query();
+
+    // Incluir categoría inactiva si viene desde edición
+    if ($request->has('include_id')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('status', 'active')
+              ->orWhere('id', $request->include_id);
+        });
+    } else {
+        $query->where('status', 'active');
+    }
+
+    // Formatea el resultado para Select2
+    $categorias = $query->orderBy('id')->get()->map(function ($categoria) {
+        return [
+            'id' => $categoria->id,
+            'text' => $categoria->status === 'active'
+                      ? $categoria->name
+                      : $categoria->name . ' (inactiva)', // para distinguir
+        ];
+    });
+
+    return response()->json($categorias);
+    }
+}

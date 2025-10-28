@@ -1,0 +1,94 @@
+/* Estilos personalizados para el menú de selección de columnas */
+.dt-button-collection .dt-button {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    display: block;
+    text-align: left;
+}
+
+/* Cuando una columna está activa (visible) */
+.dt-button-collection .dt-button.active {
+    background-color: #28a745 !important;
+    /* Verde */
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Cuando una columna está desactivada (oculta) */
+.dt-button-collection .dt-button:not(.active) {
+    background-color: #dc3545 !important;
+    /* Rojo */
+    color: white !important;
+    font-weight: bold;
+}
+
+/*preloader*/
+
+/* Oculta el navbar hasta que todo esté listo visualmente */
+#navbar-nav {
+    visibility: hidden;
+}
+
+/* Cuando todo cargue, lo muestra */
+html.nav-ready #navbar-nav {
+    visibility: visible;
+}
+
+/* Prevenir íconos rotos antes de que Feather o RemixIcons carguen */
+i[class^="ri-"]::before {
+    visibility: hidden;
+}
+html.nav-ready i[class^="ri-"]::before {
+    visibility: visible;
+}
+
+/* Contraer menú desplegable automático tipo "More" al inicio */
+.menu-dropdown.collapse:not(.show) {
+    display: none;
+}
+
+/* Centrado vertical solo en el área del contenido principal */
+.content-preloader {
+    position: relative;
+    height: 400px; /* Puedes ajustarlo o usar min-height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #fff;
+    border-top: 5px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+[data-layout="horizontal"] .page-content {
+    margin-top: 0 !important;
+}
+
+@media (max-width: 1024px) {
+    [data-layout="horizontal"] .page-content {
+        padding-top: 35px !important;
+    }
+}
+
+
+@media (min-width: 1024.1px) {
+    [data-layout="horizontal"] .container-fluid,
+    [data-layout="horizontal"] .layout-width {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}
