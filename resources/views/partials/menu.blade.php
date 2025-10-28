@@ -55,19 +55,19 @@
                     ])
                     <li class="menu-title"><span>Mantenimiento</span></li>
                     @can('administrar.categorias.index')
-                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('categorias.index') }}"><i class="ri-flag-2-line"></i> <span>Categoria</span></a></li>
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('categorias.index') }}"><i class="ri-flag-2-line"></i> <span>Categorias</span></a></li>
                     @endcan
                     @can('administrar.productos.index')
-                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('products.index') }}"><i class="ri-pushpin-fill"></i> <span>Producto</span></a></li>
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('products.index') }}"><i class="ri-pushpin-fill"></i> <span>Productos</span></a></li>
                     @endcan
                     @can('administrar.clientes.index')
-                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('customers.index') }}"><i class="ri-user-5-fill"></i> <span>Cliente</span></a></li>
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('customers.index') }}"><i class="ri-user-5-fill"></i> <span>Tiendas</span></a></li>
                     @endcan
                     @can('administrar.proveedores.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('suppliers.index') }}"><i class="ri-account-box-line"></i> <span>Proveedor</span></a></li>
                     @endcan
                     @can('administrar.usuarios.index')
-                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('users.index') }}"><i class="ri-honour-line"></i> <span>Usuario</span></a></li>
+                    <li class="nav-item"><a class="nav-link menu-link" href="{{ route('users.index') }}"><i class="ri-honour-line"></i> <span>Usuarios</span></a></li>
                     @endcan
                     @can('administrar.roles.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('roles.index') }}"><i class="ri-checkbox-line"></i> <span>Roles</span></a></li>
