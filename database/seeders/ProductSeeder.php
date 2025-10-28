@@ -7,8 +7,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\User;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class ProductSeeder extends Seeder
 {
@@ -49,9 +47,6 @@ class ProductSeeder extends Seeder
         // Generar sku: PROD-00001, PROD-00002, etc.
         $sku = 'PROD-' . str_pad($index + 1, 5, '0', STR_PAD_LEFT);
 
-        // Para fechvencimiento, ejemplo: hoy + entre 30 y 365 días aleatorios
-        $fechvencimiento = Carbon::now()->addDays(rand(30, 365))->format('Y-m-d');
-
         Product::create([
             'name' => $product['name'],
             'description' => $product['description'],
@@ -61,7 +56,6 @@ class ProductSeeder extends Seeder
             'user_id' => $users->random()->id,
             'status' => 'available',
             'sku' => $sku,
-            'fechvencimiento' => $fechvencimiento,
         ]);
     }
     }

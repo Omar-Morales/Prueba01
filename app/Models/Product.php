@@ -17,8 +17,7 @@ class Product extends Model
         'quantity',
         'category_id',
         'status',
-        'sku',
-        'fechvencimiento'
+        'sku'
     ];
 
     public function category(){
