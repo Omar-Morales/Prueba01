@@ -10,8 +10,8 @@ use App\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -38,54 +38,72 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'price' => 'required|numeric|min:0',
-        'quantity' => 'required|integer|min:1',
-        'category_id' => 'required|exists:categories,id',
-        //'status' => 'required|in:available,sold,archived',
-        'temp_images' => 'nullable|array',
-        'temp_images.*' => 'string',
-    ]);
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')->where(fn($query) => $query->whereIn('status', ['available', 'sold'])),
+            ],
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:1',
+            'category_id' => 'required|exists:categories,id',
+            //'status' => 'required|in:available,sold,archived',
+            'temp_images' => 'nullable|array',
+            'temp_images.*' => 'string',
+        ]);
 
-    // 🛑 Validar que la categoría no esté inactiva o archivada
-    $categoria = Category::find($request->category_id);
-    if ($categoria && $categoria->status === 'inactive') {
-        return response()->json(['message' => "La categoría '{$categoria->name}' está inactiva y no puede ser usada."], 422);
-    }
+        $categoria = Category::find($request->category_id);
+        if ($categoria && $categoria->status === 'inactive') {
+            return response()->json(['message' => 'La categoria "' . $categoria->name . '" esta inactiva y no puede ser usada.'], 422);
+        }
 
-    // Generar SKU automáticamente
-    $latest = Product::orderBy('id', 'desc')->first();
-    $nextId = $latest ? $latest->id + 1 : 1;
-    $sku = 'PROD-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        $existing = Product::where('name', $request->name)->first();
+        $reactivated = false;
 
-    // Crear producto
-    $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id'/*, 'status'*/]);
-    $data['user_id'] = auth()->id();
-    $data['sku'] = $sku;
+        if ($existing && $existing->status === 'archived') {
+            $existing->fill($request->only(['name', 'description', 'price', 'quantity', 'category_id']));
+            $existing->status = 'available';
+            $existing->user_id = auth()->id();
+            $existing->save();
+            $product = $existing;
+            $reactivated = true;
+        } else {
+            $latest = Product::orderBy('id', 'desc')->first();
+            $nextId = $latest ? $latest->id + 1 : 1;
+            $sku = 'PROD-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-    $product = Product::create($data);
+            $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id']);
+            $data['user_id'] = auth()->id();
+            $data['sku'] = $sku;
+            $data['status'] = 'available';
 
-    // Guardar imágenes temporales subidas por Dropzone
-    if ($request->filled('temp_images')) {
-        foreach ($request->input('temp_images') as $tempPath) {
-            $filename = basename($tempPath);
-            $newPath = "products/{$product->id}/{$filename}";
+            $product = Product::create($data);
+        }
 
-            if (\Storage::disk('public')->exists($tempPath)) {
-                \Storage::disk('public')->move($tempPath, $newPath);
+        $this->syncProductStatus($product);
 
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_path' => $newPath,
-                ]);
+        if ($request->filled('temp_images')) {
+            foreach ($request->input('temp_images') as $tempPath) {
+                $filename = basename($tempPath);
+                $newPath = "products/{$product->id}/{$filename}";
+
+                if (\Storage::disk('public')->exists($tempPath)) {
+                    \Storage::disk('public')->move($tempPath, $newPath);
+
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $newPath,
+                    ]);
+                }
             }
         }
-    }
 
-    return response()->json(['message' => 'Producto creado correctamente.', 'id' => $product->id]);
+        return response()->json([
+            'message' => $reactivated ? 'Producto reactivado correctamente.' : 'Producto creado correctamente.',
+            'id' => $product->id,
+        ]);
     }
-
 
     public function show($id)
     {
@@ -126,7 +144,12 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
     $request->validate([
-        'name' => 'required|string|max:255',
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('products')->ignore($id)->where(fn($query) => $query->whereIn('status', ['available', 'sold'])),
+        ],
         'description' => 'nullable|string',
         'price' => 'required|numeric|min:0',
         'quantity' => 'required|integer|min:1',
@@ -138,8 +161,10 @@ class ProductController extends Controller
 
     $product = Product::findOrFail($id);
 
-    $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id'/*, 'status'*/]);
-    $product->update($data);
+    $product->fill($request->only(['name', 'description', 'price', 'quantity', 'category_id']));
+    $product->save();
+
+    $this->syncProductStatus($product);
 
     if ($request->filled('images_to_delete')) {
         $imagesToDelete = explode(',', $request->input('images_to_delete'));
@@ -184,7 +209,7 @@ class ProductController extends Controller
 
     public function getData(Request $request)
     {
-    $products = Product::with('category', 'images')->select('products.*')->whereIn('status', ['available', 'sold', 'archived']);
+    $products = Product::with('category', 'images')->select('products.*')->whereIn('status', ['available', 'sold']);
 
     return DataTables::of($products)
             ->addColumn('estado', function ($product) {
@@ -239,6 +264,19 @@ class ProductController extends Controller
         })
         ->rawColumns(['estado', 'image', 'acciones'])
         ->make(true);
+    }
+
+    protected function syncProductStatus(Product $product): void
+    {
+        if ($product->quantity <= 0) {
+            if ($product->status !== 'sold') {
+                $product->update(['status' => 'sold']);
+            }
+        } else {
+            if ($product->status !== 'available') {
+                $product->update(['status' => 'available']);
+            }
+        }
     }
 
 public function uploadTemp(Request $request)
