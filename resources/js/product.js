@@ -300,7 +300,6 @@ try {
     //$('#category_id').val(product.category_id).trigger('change');
     $('#price').val(product.price);
     $('#quantity').val(product.quantity);
-    $('#description').val(product.description);
     //$('#status').val(product.status).trigger('change');
     const $select = $('#category_id');
     $select.empty(); // Vaciar opciones actuales
@@ -392,13 +391,13 @@ $(document).on('click', '.delete-btn', function(e){
   let id = $(this).data('id');
 
   Swal.fire({
-    title: '¿Estás seguro?',
-    text: '¡No podrás revertir esto!',
+    title: '\u00BFEst\u00e1s seguro?',
+    text: '\u00A1No podr\u00e1s revertir esto!',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Sí, eliminar',
+    confirmButtonText: 'S\u00ed, eliminar',
     cancelButtonText: 'Cancelar'
   }).then(res => {
     if(res.isConfirmed){
@@ -424,3 +423,4 @@ $(document).on('click', '.delete-btn', function(e){
     }
   });
 });
+

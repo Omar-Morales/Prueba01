@@ -106,11 +106,6 @@
             </select>
           </div>-->
 
-           <div class="col-md-12 mb-3">
-            <label for="description" class="form-label">Descripción</label>
-            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Descripción opcional..."></textarea>
-          </div>
-
             <div class="mb-3">
             <label for="dropzoneImages" class="form-label">Imágenes (puedes seleccionar varias)</label>
             <form id="formProducto">

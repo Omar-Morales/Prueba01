@@ -44,7 +44,6 @@ class ProductController extends Controller
                 'max:255',
                 Rule::unique('products')->where(fn($query) => $query->whereIn('status', ['available', 'sold'])),
             ],
-            'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'category_id' => 'required|exists:categories,id',
@@ -62,7 +61,7 @@ class ProductController extends Controller
         $reactivated = false;
 
         if ($existing && $existing->status === 'archived') {
-            $existing->fill($request->only(['name', 'description', 'price', 'quantity', 'category_id']));
+            $existing->fill($request->only(['name', 'price', 'quantity', 'category_id']));
             $existing->status = 'available';
             $existing->user_id = auth()->id();
             $existing->save();
@@ -73,7 +72,7 @@ class ProductController extends Controller
             $nextId = $latest ? $latest->id + 1 : 1;
             $sku = 'PROD-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-            $data = $request->only(['name', 'description', 'price', 'quantity', 'category_id']);
+            $data = $request->only(['name', 'price', 'quantity', 'category_id']);
             $data['user_id'] = auth()->id();
             $data['sku'] = $sku;
             $data['status'] = 'available';
@@ -143,25 +142,24 @@ class ProductController extends Controller
 
     public function update(Request $request, string $id)
     {
-    $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('products')->ignore($id)->where(fn($query) => $query->whereIn('status', ['available', 'sold'])),
-        ],
-        'description' => 'nullable|string',
-        'price' => 'required|numeric|min:0',
-        'quantity' => 'required|integer|min:1',
-        'category_id' => 'required|exists:categories,id',
-        //'status' => 'required|in:available,sold,archived',
-        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products')->ignore($id)->where(fn($query) => $query->whereIn('status', ['available', 'sold'])),
+            ],
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:1',
+            'category_id' => 'required|exists:categories,id',
+            //'status' => 'required|in:available,sold,archived',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'images_to_delete' => 'nullable|string',
     ]);
 
     $product = Product::findOrFail($id);
 
-    $product->fill($request->only(['name', 'description', 'price', 'quantity', 'category_id']));
+    $product->fill($request->only(['name', 'price', 'quantity', 'category_id']));
     $product->save();
 
     $this->syncProductStatus($product);
