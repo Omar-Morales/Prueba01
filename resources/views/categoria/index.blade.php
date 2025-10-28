@@ -98,4 +98,3 @@
 @push('scripts')
 @vite('resources/js/categoria.js')
 @endpush
-

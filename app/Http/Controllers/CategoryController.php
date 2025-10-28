@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -31,11 +32,27 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:categories|max:255',
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('categories')->where(fn($query) => $query->where('status', 'active')),
+            ],
             'description' => 'nullable|string',
         ]);
 
-        Category::create($request->all());
+        $existing = Category::where('name', $request->name)->first();
+
+        if ($existing && $existing->status === 'inactive') {
+            if ($request->filled('description')) {
+                $existing->description = $request->description;
+            }
+            $existing->status = 'active';
+            $existing->save();
+
+            return response()->json(['message' => 'Categoría reactivada correctamente.']);
+        }
+
+        Category::create($request->only(['name', 'description']));
 
         return response()->json(['message' => 'Categoría creada correctamente.']);
     }
@@ -53,12 +70,16 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name' => 'required|max:255|unique:categories,name,' . $id,
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('categories')->ignore($id)->where(fn($query) => $query->where('status', 'active')),
+            ],
             'description' => 'nullable|string',
         ]);
 
         $categoria = Category::findOrFail($id);
-        $categoria->update($request->all());
+        $categoria->update($request->only(['name', 'description']));
 
         return response()->json(['message' => 'Categoría actualizada correctamente.']);
     }
