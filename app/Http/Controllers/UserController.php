@@ -50,7 +50,7 @@ class UserController extends Controller
             $data['photo'] = $request->file('photo')->store('users', 'public');
         }
 
-        User::create($data);
+        $user = User::create($data);
 
         // Asignar rol con Spatie
         $role = Role::find($request->role_id);
@@ -81,15 +81,20 @@ class UserController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'nullable|string|max:9',
             'address' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'role_id' => 'required|exists:roles,id',
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $rules['password'] = 'string|min:8|confirmed';
+        }
+
+        $request->validate($rules);
 
         $user = User::findOrFail($id);
         $data = $request->except('password', 'photo');

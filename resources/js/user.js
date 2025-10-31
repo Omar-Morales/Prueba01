@@ -198,10 +198,26 @@ document.getElementById('formUsuario').addEventListener('submit', function (e) {
             }).showToast();
         })
         .catch(error => {
-            console.error(error);
+            const response = error.response;
+            let message = 'Error al guardar el usuario';
+
+            if (response?.data?.errors) {
+                const messages = [];
+                Object.entries(response.data.errors).forEach(([field, errors]) => {
+                    errors.forEach(original => {
+                        messages.push(`${field.replace(/_/g, ' ')}: ${original}`);
+                    });
+                });
+                message = messages.join('\n');
+            } else if (response?.data?.message) {
+                message = response.data.message;
+            }
+
+            console.error(response?.data || error);
+
             Toastify({
-                text: 'Error al guardar el usuario',
-                duration: 3000,
+                text: message,
+                duration: 4000,
                 gravity: 'top',
                 position: 'right',
                 backgroundColor: '#dc3545'

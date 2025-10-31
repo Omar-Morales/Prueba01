@@ -8,19 +8,19 @@
         <!-- Dark Logo-->
         <a href="index.html" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('assets/images/shop-light.png') }}" alt="" height="22">
+                <img src="{{ asset('assets/images/bdys-logo.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('assets/images/shop-light.png') }}" alt="" height="17">
+                <img src="{{ asset('assets/images/bdys-logo.png') }}" alt="" height="17">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="index.html" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('assets/images/shop-light.png') }}" alt="" height="40">
+                <img src="{{ asset('assets/images/bdys-logo.png') }}" alt="" height="40">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('assets/images/shop-light.png') }}" alt="" height="40">
+                <img src="{{ asset('assets/images/bdys-logo.png') }}" alt="" height="40">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-horizontal-sm-hover" id="horizontal-hover">
@@ -38,7 +38,7 @@
             <div id="two-column-menu"></div>
             <ul class="navbar-nav" id="navbar-nav">
                     @can('administrar.dashboard.index')
-                    <li class="menu-title"><span>Dashboard</span></li>
+                    {{--<li class="menu-title"><span>Dashboard</span></li> --}}
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="{{ route('dashboard') }}">
                             <i class="ri-window-line"></i> <span>Dashboard</span>
@@ -53,7 +53,7 @@
                     'administrar.usuarios.index',
                     'administrar.roles.index',
                     ])
-                    <li class="menu-title"><span>Mantenimiento</span></li>
+                    {{--<li class="menu-title"><span>Mantenimiento</span></li> --}}
                     @can('administrar.categorias.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('categorias.index') }}"><i class="ri-flag-2-line"></i> <span>Categorias</span></a></li>
                     @endcan
@@ -74,22 +74,22 @@
                     @endcan
                     @endcanany
 
-                    <li class="menu-title"><span>Compra</span></li>
+                    {{--<li class="menu-title"><span>Compra</span></li> --}}
                     @can('administrar.compras.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('compras.index') }}"><i class="ri-red-packet-fill"></i> <span>Compras</span></a></li>
                     @endcan
 
-                    <li class="menu-title"><span>Ventas</span></li>
+                    {{--<li class="menu-title"><span>Ventas</span></li> --}}
                     @can('administrar.ventas.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('ventas.index') }}"><i class="ri-store-line"></i> <span>Ventas</span></a></li>
                     @endcan
 
-                    <li class="menu-title"><span>Inventario</span></li>
+                    {{--<li class="menu-title"><span>Inventario</span></li> --}}
                     @can('administrar.inventarios.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('inventories.index') }}"><i class="ri-filter-line"></i> <span>Listado Inventario</span></a></li>
                     @endcan
 
-                    <li class="menu-title"><span>Transaccion</span></li>
+                    {{-- <li class="menu-title"><span>Transaccion</span></li> --}}
                     @can('administrar.transacciones.index')
                     <li class="nav-item"><a class="nav-link menu-link" href="{{ route('transactions.index') }}"><i class="ri-money-dollar-circle-line"></i> <span>Listado Transaccion</span></a></li>
                     @endcan
