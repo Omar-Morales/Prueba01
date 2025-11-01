@@ -4,9 +4,14 @@
     display: none !important;
 }
 
-[data-layout="vertical"] .page-content {
-      padding: 45px 0 0 0 !important;
+[data-layout="vertical"] .page-content .page-content {
+    padding: 0 !important;
+    background: transparent;
+}
 
+[data-layout="vertical"] .page-content .page-content .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 

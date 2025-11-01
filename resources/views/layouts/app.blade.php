@@ -40,7 +40,9 @@
 
             <!-- Contenido oculto hasta que se cargue -->
             <div id="main-content-wrapper" class="page-content">
-                @yield('content')
+                <div class="container-fluid">
+                    @yield('content')
+                </div>
             </div>
 
             @include('partials.footer')
