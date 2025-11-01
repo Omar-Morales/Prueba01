@@ -12,7 +12,7 @@
     document.documentElement.setAttribute("data-layout-mode", mode);
   })();
 </script>
-<link rel="shortcut icon" href="{{ asset('assets/images/shop-light.png') }}">
+<link rel="shortcut icon" href="{{ asset('assets/images/bdys-light.png') }}">
 <!-- Scripts de configuración -->
 <script src="{{ asset('assets/js/personalizado.js') }}"></script>
 <script src="{{ asset('assets/js/layout.js') }}"></script>

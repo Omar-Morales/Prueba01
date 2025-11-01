@@ -7,7 +7,7 @@
 </head>
 <table>
     <tr>
-      <th colspan="7" style="text-align:center; display: table-cell;vertical-align: middle;border: 1px solid black;border-collapse: collapse; font-family:'Arial', Helvetica, sans-serif;font-weight:2em;"><b>SISTEMA DE GESTIÓN DE PEDIDOS</b><div class="image"><img src="{{public_path('assets/images/shop-dark.png')}}" alt="logo" width="50px" height="50px"></div></th>
+      <th colspan="7" style="text-align:center; display: table-cell;vertical-align: middle;border: 1px solid black;border-collapse: collapse; font-family:'Arial', Helvetica, sans-serif;font-weight:2em;"><b>SISTEMA DE GESTIÓN DE PEDIDOS</b><div class="image"><img src="{{public_path('assets/images/bdys-dark.png')}}" alt="logo" width="50px" height="50px"></div></th>
     </tr>
     <tr>
         <th colspan="7" style="text-align:center; display: table-cell;vertical-align: middle;border: 1px solid black;border-collapse: collapse;font-family:'Arial', Helvetica, sans-serif;"><b>LISTADO DE TRANSACCIONES</b></th>

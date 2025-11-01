@@ -8,7 +8,7 @@
         <tr>
             <th colspan="4" style="text-align:center; border: 1px solid black; font-family:'Arial', Helvetica, sans-serif;">
                 <b>SISTEMA DE GESTIÓN DE PEDIDOS</b>
-                <div><img src="{{ public_path('assets/images/shop-dark.png') }}" alt="logo" width="50px" height="50px"></div>
+                <div><img src="{{ public_path('assets/images/bdys-dark.png') }}" alt="logo" width="50px" height="50px"></div>
             </th>
         </tr>
         <tr>

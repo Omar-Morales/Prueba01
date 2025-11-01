@@ -20,10 +20,10 @@
                         <div class="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
                                 <a href="/" class="d-inline-block auth-logo">
-                                    <img src="{{ asset('assets/images/shop-light.png') }}" alt="Shop Logo" height="100">
+                                    <img src="{{ asset('assets/images/bdys-light.png') }}" alt="Bdys Logo" height="120">
                                 </a>
                             </div>
-                            <p class="mt-3 fs-15 fw-medium">Sistema de Gestion de Pedidos</p>
+                            <p class="mt-3 fs-15 fw-medium">Sistema de Pedidos</p>
                         </div>
                     </div>
                 </div>

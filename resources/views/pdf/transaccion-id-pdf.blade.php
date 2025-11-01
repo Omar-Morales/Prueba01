@@ -47,7 +47,7 @@
             <th colspan="4" class="center header-title">
                 SISTEMA DE GESTIÓN DE PEDIDOS
                 <div style="margin-top: 4px;">
-                    <img src="{{ public_path('assets/images/shop-dark.png') }}" alt="logo" width="50px" height="50px">
+                    <img src="{{ public_path('assets/images/bdys-dark.png') }}" alt="logo" width="50px" height="50px">
                 </div>
             </th>
         </tr>
