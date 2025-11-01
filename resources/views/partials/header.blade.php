@@ -1,4 +1,3 @@
-
 <header id="page-topbar">
     <div class="layout-width">
         <div class="navbar-header">
@@ -70,7 +69,8 @@
                         <form class="p-3">
                             <div class="form-group m-0">
                                 <div class="input-group">
-                                    <input type="text" id="search-mobile" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                    <input type="text" id="search-mobile" class="form-control"
+                                        placeholder="Search ..." aria-label="Recipient's username">
                                     <button class="btn btn-primary" type="submit"><i
                                             class="mdi mdi-magnify"></i></button>
                                 </div>
@@ -97,11 +97,11 @@
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
-                        <img class="rounded-circle header-profile-user"
-                            src="{{ $photoUrl }}"
-                            alt="Avatar de {{ $user->name }}">
+                            <img class="rounded-circle header-profile-user" src="{{ $photoUrl }}"
+                                alt="Avatar de {{ $user->name }}">
                             <span class="text-start ms-xl-2">
-                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ $user->name ?? 'Usuario'}}</span>
+                                <span
+                                    class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ $user->name ?? 'Usuario' }}</span>
                                 <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
                                     {{ $user->role->name ?? 'Usuario' }}
                                 </span>
@@ -109,7 +109,7 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <h6 class="dropdown-header">Bienvenido, {{ $user->name ?? 'Usuario'}}!</h6>
+                        <h6 class="dropdown-header">Bienvenido, {{ $user->name ?? 'Usuario' }}!</h6>
                         <a class="dropdown-item" href="{{ route('profile.edit') }}">
                             <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                             <span class="align-middle">Perfil</span>
@@ -130,27 +130,59 @@
 </header>
 
 <script>
-        const paginas = [
-        { nombre: 'Dashboard', url: "{{ route('dashboard') }}" },
-        { nombre: 'Categoría', url: "{{ route('categorias.index') }}" },
-        { nombre: 'Producto', url: "{{ route('products.index') }}" },
-        { nombre: 'Tienda', url: "{{ route('customers.index') }}" },
-        { nombre: 'Proveedor', url: "{{ route('suppliers.index') }}" },
-        { nombre: 'Usuario', url: "{{ route('users.index') }}" },
-        { nombre: 'Roles', url: "{{ route('roles.index') }}" },
-        { nombre: 'Compras', url: "{{ route('compras.index') }}" },
-        { nombre: 'Ventas', url: "{{ route('ventas.index') }}" },
-        { nombre: 'Inventario', url: "{{ route('inventories.index') }}" },
-        { nombre: 'Transacción', url: "{{ route('transactions.index') }}" }
+    const paginas = [{
+            nombre: 'Dashboard',
+            url: "{{ route('dashboard') }}"
+        },
+        {
+            nombre: 'Categoría',
+            url: "{{ route('categorias.index') }}"
+        },
+        {
+            nombre: 'Producto',
+            url: "{{ route('products.index') }}"
+        },
+        {
+            nombre: 'Tienda',
+            url: "{{ route('customers.index') }}"
+        },
+        {
+            nombre: 'Proveedor',
+            url: "{{ route('suppliers.index') }}"
+        },
+        {
+            nombre: 'Usuario',
+            url: "{{ route('users.index') }}"
+        },
+        {
+            nombre: 'Roles',
+            url: "{{ route('roles.index') }}"
+        },
+        {
+            nombre: 'Compras',
+            url: "{{ route('compras.index') }}"
+        },
+        {
+            nombre: 'Ventas',
+            url: "{{ route('ventas.index') }}"
+        },
+        {
+            nombre: 'Inventario',
+            url: "{{ route('inventories.index') }}"
+        },
+        {
+            nombre: 'Transacción',
+            url: "{{ route('transactions.index') }}"
+        }
     ];
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const input = document.getElementById('search-options');
         const dropdown = document.getElementById('search-dropdown');
         const dropdownList = dropdown.querySelector('.notification-list');
 
         //pantallas grandes
-        input.addEventListener('input', function () {
+        input.addEventListener('input', function() {
             const query = this.value.toLowerCase();
             dropdownList.innerHTML = '';
 
@@ -183,18 +215,18 @@
         });
 
         const closeBtn = document.getElementById('search-close-options');
-        closeBtn.addEventListener('click', function () {
+        closeBtn.addEventListener('click', function() {
             input.value = '';
             dropdownList.innerHTML = '';
             dropdown.classList.remove('show');
         });
 
-    //pantallas de celulares
+        //pantallas de celulares
 
         const mobileInput = document.getElementById('search-mobile');
         const mobileForm = mobileInput.closest('form');
 
-        mobileForm.addEventListener('submit', function (e) {
+        mobileForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const query = mobileInput.value.toLowerCase();
 
