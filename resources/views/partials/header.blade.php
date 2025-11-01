@@ -7,19 +7,19 @@
                 <div class="navbar-brand-box horizontal-logo">
                     <a href="{{ route('dashboard') }}" class="logo logo-dark">
                         <span class="logo-sm">
-                            <img src="{{ asset('assets/images/bdys-dark.png') }}" alt="" height="22">
+                            <img src="{{ asset('assets/images/bdys-dark.png') }}" alt="" height="40">
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ asset('assets/images/bdys-dark.png') }}" alt="" height="40">
+                            <img src="{{ asset('assets/images/bdys-dark.png') }}" alt="" height="60">
                         </span>
                     </a>
 
                     <a href="{{ route('dashboard') }}" class="logo logo-light">
                         <span class="logo-sm">
-                            <img src="{{ asset('assets/images/bdys-light.png') }}" alt="" height="22">
+                            <img src="{{ asset('assets/images/bdys-light.png') }}" alt="" height="40">
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ asset('assets/images/bdys-light.png') }}" alt="" height="40">
+                            <img src="{{ asset('assets/images/bdys-light.png') }}" alt="" height="60">
                         </span>
                     </a>
                 </div>

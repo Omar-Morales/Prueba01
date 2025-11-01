@@ -23,14 +23,14 @@
                                     <img src="{{ asset('assets/images/bdys-light.png') }}" alt="Bdys Logo" height="120">
                                 </a>
                             </div>
-                            <p class="mt-3 fs-15 fw-medium">Sistema de Pedidos</p>
+                            <h2 class="mt-3 text-white fw-semibold">Sistema de Pedidos</h2>
                         </div>
                     </div>
                 </div>
 
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 col-xl-5">
-                        <div class="card mt-4">
+                        <div class="card mt-1">
                             <div class="card-body p-4">
                                 <div class="text-center mt-2">
                                     <h5 class="text-primary">¡Bienvenido!</h5>
