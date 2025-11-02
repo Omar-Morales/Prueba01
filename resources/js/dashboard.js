@@ -8,12 +8,14 @@ document.addEventListener('DOMContentLoaded', function () {
             // Totales
 
             animateCounter('totalCategorias', data.stats.totalCategorias);
-animateCounter('totalProductos', data.stats.totalProductos);
-animateCounter('totalCompras', data.stats.totalCompras);
-animateCounter('totalVentas', data.stats.totalVentas);
-animateCounter('totalUsuarios', data.stats.totalUsuarios);
-animateCounter('totalVentas1', data.totalVentas);
-animateCounter('totalCompras1', data.totalCompras);
+            animateCounter('totalProductos', data.stats.totalProductos);
+            animateCounter('totalUsuarios', data.stats.totalUsuarios);
+
+            animateCounter('totalComprasMonto', data.totalCompras);
+            animateCounter('totalVentasMonto', data.totalVentas);
+
+            animateCounter('totalComprasTransacciones', data.stats.totalCompras);
+            animateCounter('totalVentasTransacciones', data.stats.totalVentas);
 
             // Ventas vs Compras (mensual)
             const meses = [...new Set([...data.ventas.map(v => v.month), ...data.compras.map(c => c.month)])].sort();
@@ -94,10 +96,13 @@ animateCounter('totalCompras1', data.totalCompras);
 
 function animateCounter(elementId, endValue, duration = 500) {
     const el = document.getElementById(elementId);
+    if (!el) {
+        return;
+    }
 
     // Mostrar el wrapper del número
     const wrapper = el.closest('h2');
-    if (wrapper.classList.contains('opacity-0')) {
+    if (wrapper && wrapper.classList.contains('opacity-0')) {
         wrapper.classList.remove('opacity-0');
     }
 
@@ -117,4 +122,3 @@ function animateCounter(elementId, endValue, duration = 500) {
 
     requestAnimationFrame(update);
 }
-

@@ -1,8 +1,7 @@
 @extends('layouts.app')
-
 @section('title', 'Dashboard')
-
 @section('content')
+
     <div class="page-content">
         <div class="container-fluid">
 
@@ -17,108 +16,117 @@
                                 <li class="breadcrumb-item active">Dashboard</li>
                             </ol>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card crm-widget">
-                        <div class="card-body p-0">
-                            <div class="row row-cols-xxl-5 row-cols-md-3 row-cols-1 g-0">
-
-                                <div class="col">
-                                    <div class="py-4 px-3">
-                                        <h5 class="text-muted text-uppercase fs-13">Total Categorías</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <i class="ri-database-2-line display-6 text-muted"></i>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h2 class="mb-0"><span class="counter-value" id="totalCategorias">0</span></h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="py-4 px-3">
-                                        <h5 class="text-muted text-uppercase fs-13">Total Productos</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <i class="ri-shopping-cart-line display-6 text-muted"></i>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h2 class="mb-0"><span class="counter-value" id="totalProductos">0</span></h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="py-4 px-3">
-                                        <h5 class="text-muted text-uppercase fs-13">Total Compras</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <i class="ri-wallet-line display-6 text-muted"></i>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h2 class="mb-0"><span class="counter-value" id="totalCompras">0</span></h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="py-4 px-3">
-                                        <h5 class="text-muted text-uppercase fs-13">Total Ventas</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <i class="ri-money-dollar-circle-line display-6 text-muted"></i>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h2 class="mb-0"><span class="counter-value" id="totalVentas">0</span></h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="py-4 px-3">
-                                        <h5 class="text-muted text-uppercase fs-13">Total Usuarios</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0">
-                                                <i class="ri-user-line display-6 text-muted"></i>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <h2 class="mb-0"><span class="counter-value" id="totalUsuarios">0</span></h2>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div><!-- end row -->
-                        </div><!-- end card body -->
-                    </div><!-- end card -->
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card text-center">
+            <div class="row row-cols-xxl-5 row-cols-lg-3 row-cols-md-2 row-cols-1 g-3 mb-1">
+                <div class="col">
+                    <div class="card card-animate summary-card">
                         <div class="card-body">
-                            <h5 class="card-title">Total Ventas</h5>
-                            <h2 id="totalVentas1">0</h2>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-muted text-uppercase fw-medium mb-0">Total Categorías</p>
+                                    <h2 class="mt-1 ff-secondary fw-semibold mb-0">
+                                        <span class="counter-value" id="totalCategorias">0</span>
+                                    </h2>
+                                </div>
+                                <div class="avatar-sm flex-shrink-0">
+                                    <span class="avatar-title bg-soft-primary text-primary rounded-circle fs-2">
+                                        <i class="ri-database-2-line"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card text-center">
+                <div class="col">
+                    <div class="card card-animate summary-card">
                         <div class="card-body">
-                            <h5 class="card-title">Total Compras</h5>
-                            <h2 id="totalCompras1">0</h2>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-muted text-uppercase fw-medium mb-0">Total Productos</p>
+                                    <h2 class="mt-1 ff-secondary fw-semibold mb-0">
+                                        <span class="counter-value" id="totalProductos">0</span>
+                                    </h2>
+                                </div>
+                                <div class="avatar-sm flex-shrink-0">
+                                    <span class="avatar-title bg-soft-success text-success rounded-circle fs-2">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card card-animate summary-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-muted text-uppercase fw-medium mb-0">Total Compras</p>
+                                    <h2 class="mt-1 ff-secondary fw-semibold mb-0">
+                                        S/. <span class="counter-value" id="totalComprasMonto">0</span>
+                                    </h2>
+                                </div>
+                                <div class="avatar-sm flex-shrink-0">
+                                    <span class="avatar-title bg-soft-warning text-warning rounded-circle fs-2">
+                                        <i class="ri-wallet-line"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="summary-meta text-muted">
+                                <span class="badge bg-soft-warning text-warning">
+                                    <i class="ri-shopping-basket-2-line align-middle me-1"></i> Órdenes
+                                <span id="totalComprasTransacciones" class="ms-2">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card card-animate summary-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-muted text-uppercase fw-medium mb-0">Total Ventas</p>
+                                    <h2 class="mt-1 ff-secondary fw-semibold mb-0">
+                                        S/. <span class="counter-value" id="totalVentasMonto">0</span>
+                                    </h2>
+                                </div>
+                                <div class="avatar-sm flex-shrink-0">
+                                    <span class="avatar-title bg-soft-danger text-danger rounded-circle fs-2">
+                                        <i class="ri-money-dollar-circle-line"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="summary-meta text-muted">
+                                <span class="badge bg-soft-danger text-danger">
+                                    <i class="ri-arrow-right-up-line align-middle me-1"></i> Facturas
+                                <span id="totalVentasTransacciones" class="ms-2">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card card-animate summary-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-muted text-uppercase fw-medium mb-0">Total Usuarios</p>
+                                    <h2 class="mt-1 ff-secondary fw-semibold mb-0">
+                                        <span class="counter-value" id="totalUsuarios">0</span>
+                                    </h2>
+                                </div>
+                                <div class="avatar-sm flex-shrink-0">
+                                    <span class="avatar-title bg-soft-info text-info rounded-circle fs-2">
+                                        <i class="ri-user-line"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -136,8 +144,7 @@
             </div>
 
             <div class="row">
-
-                <!-- Gráfico de Ventas por Producto -->
+                <!-- Grafico de Ventas por Producto -->
                 <div class="col-6">
                     <div class="card">
                         <div class="card-body">
@@ -146,7 +153,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Gráfico de Compras por Producto -->
                 <div class="col-6">
                     <div class="card">
@@ -156,11 +162,10 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="row">
-                <!-- Gráfico de Top Clientes -->
+                <!-- GrÃ¡fico de Top Clientes -->
                 <div class="col-6">
                     <div class="card">
                         <div class="card-body">
@@ -169,8 +174,7 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Gráfico de Top Proveedores -->
+                <!-- GrÃ¡fico de Top Proveedores -->
                 <div class="col-6">
                     <div class="card">
                         <div class="card-body">
@@ -186,16 +190,15 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
-@vite('resources/js/dashboard.js')
+    <script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+
+    @vite('resources/js/dashboard.js')
 @endpush
 @push('styles')
-<style>
-    h2 {
-    transition: opacity 0.3s ease-in-out;
-}
-</style>
+    <style>
+        h2 {
+            transition: opacity 0.3s ease-in-out;
 
+        }
+    </style>
 @endpush
-
-
